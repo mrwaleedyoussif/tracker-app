@@ -11,6 +11,9 @@ const fmtD = iso => { if (!iso) return '—'; const [y, m, d] = iso.split('-'); 
 const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const isAdmin = () => !!(S.me && S.me.appRole === 'مدير');
 const myName = () => (S.me && S.me.name) || '';
+const nkey = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[ًٌٍَُِّْ]/g, '');
+/* same rule as owns_() in the sheet: exact مسؤول البرنامج / مسؤول المؤشر, or my name inside a multi-person «المكلف» cell */
+const owns = (name, presp, iresp) => { const n = nkey(name); if (!n) return false; const p = nkey(presp); return p === n || nkey(iresp) === n || (n.split(' ').length >= 2 && p.indexOf(n) >= 0); };
 const store = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
 
 // ------------------------------------------------------------ API
@@ -117,7 +120,7 @@ function logout(silent) {
 }
 
 // ------------------------------------------------------------ cards
-function canEdit(p) { return isAdmin() || p.presp === myName() || p.iresp === myName(); }
+function canEdit(p) { return isAdmin() || owns(myName(), p.presp, p.iresp); }
 function alertClass(a) { if (!a) return ''; if (a.startsWith('⛔')) return 'late'; if (/^(⏰|🚀|🏁|🔔)/.test(a)) return 'soon'; if (a.startsWith('⚠')) return 'nodate'; return ''; }
 function card(p) {
   const pct = p.status === 'مكتمل' ? 100 : p.pct, ed = canEdit(p);
@@ -185,7 +188,7 @@ async function persist(list) {
 }
 
 // ------------------------------------------------------------ mine
-function ownSet() { return S.programs.filter(p => (p.presp || p.iresp) === myName() || p.iresp === myName()); }
+function ownSet() { return S.programs.filter(p => owns(myName(), p.presp || p.iresp, p.iresp)); }
 function mineSet() { if (isAdmin() && S.scope === undefined) S.scope = ownSet().length ? 'mine' : 'all'; return isAdmin() && S.scope === 'all' ? S.programs : ownSet(); }
 function applyFilter(list, f) {
   switch (f) {
@@ -275,7 +278,7 @@ function renderPeople() {
   const ppl = S.boot.people; const withMail = ppl.filter(p => p.email).length;
   $('peopleCount').textContent = `${withMail} من ${ppl.length} لديهم بريد إلكتروني · ${ppl.filter(p => p.phone).length} لديهم واتساب · ${ppl.filter(p => p.hasPin).length} لديهم رمز دخول`;
   $('peopleList').innerHTML = ppl.map((p, i) => `<div class="prow" style="${p.role === 'مدير المدرسة' || p.role === 'وكيل الشؤون الأكاديمية' ? 'border-color:#f1d98a;background:#fffdf3' : ''}">
-      <div class="nm"><input type="text" id="pn-${i}" value="${esc(p.name)}" placeholder="الاسم"><div class="mini">${esc(p.role)} · ${esc(p.stage)} · ${S.programs.filter(x => (x.presp || x.iresp) === p.name).length} برنامج · ${p.appRole === 'مدير' ? '🛡 مدير' : 'مسؤول'} · ${p.hasPin ? '🔑' : '⚠️ بلا رمز'}</div></div>
+      <div class="nm"><input type="text" id="pn-${i}" value="${esc(p.name)}" placeholder="الاسم"><div class="mini">${esc(p.role)} · ${esc(p.stage)} · ${S.programs.filter(x => owns(p.name, x.presp || x.iresp, '')).length} برنامج · ${p.appRole === 'مدير' ? '🛡 مدير' : 'مسؤول'} · ${p.hasPin ? '🔑' : '⚠️ بلا رمز'}</div></div>
       <div><input type="email" id="pe-${i}" value="${esc(p.email || '')}" placeholder="البريد الإلكتروني"></div>
       <div><input type="tel" id="pp-${i}" value="${esc(p.phone || '')}" placeholder="9665xxxxxxxx"></div>
       <label class="mini"><input type="checkbox" id="pm-${i}" ${p.emailOn ? 'checked' : ''}> بريد</label>
