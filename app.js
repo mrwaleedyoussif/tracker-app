@@ -401,20 +401,32 @@ function pickOne(k, row, on) { if (on) S.send[k].add(row); else S.send[k].delete
 function pickAll(k, on) { S.send[k] = new Set(on ? sendable().map(p => p.row) : []); drawPicker(k); }
 function pickSum(k) { const n = S.send[k].size; $(k + 'PickSum').textContent = n ? t('nSelected', { n }) : (k === 'sp' && $('sfMode').value === 'each' ? t('everyoneDefault') : t('nSelected', { n: 0 })); }
 function stCell(v) { return v === 'sent' ? t('stSent') : v === 'none' ? t('stNone') : v === 'quota' ? t('stQuota') : v === 'forbidden' ? t('stForbidden') : v === 'suspended' ? t('stSuspended') : v === '-' ? '' : String(v).startsWith('error') ? `<span title="${esc(v)}">${t('stError')}</span>` : esc(v); }
-/** results table; WhatsApp «link» rows get a button that opens the sender's own WhatsApp (a password message is copied, never put in the link) */
+/** results table. WhatsApp «link» rows are sent from the sender's own WhatsApp: one tap opens the chat with the message already
+ *  written (the app itself on a phone, so a password never travels in a web address), and a «next» button walks through everyone. */
+const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 function drawResults(el, key, results, secret, showCount) {
-  S.send.res[key] = results;
-  const e = results.filter(r => r.email === 'sent').length, w = results.filter(r => r.wa === 'sent' || r.wa === 'link').length, n = results.filter(r => r.email !== 'sent' && r.wa !== 'sent' && r.wa !== 'link').length;
-  $(el).innerHTML = `<div class="sendsum">${t('sendDone', { e, w, n })}</div><table class="sendres"><tr><th>${t('colName')}</th>${showCount ? `<th>${t('colCount')}</th>` : ''}<th>${t('colEmail')}</th><th>${t('colWa')}</th></tr>` +
-    results.map((r, i) => `<tr><td>${esc(r.name)}${r.reset ? ` <span class="tag">${t('newPwNote')}</span>` : ''}</td>${showCount ? `<td>${r.count}</td>` : ''}<td>${stCell(r.email)}</td><td>${r.wa === 'link' ? `<button class="btn sm ok" onclick="openWa('${key}',${i},${secret ? 1 : 0})">${t(secret ? 'copyOpenWa' : 'openWa')}</button>` : stCell(r.wa)}</td></tr>`).join('') + '</table>';
+  S.send.res[key] = results; S.send.meta = S.send.meta || {}; S.send.meta[key] = { el, secret, showCount, done: new Set() };
+  paintResults(key);
 }
-async function openWa(key, i, secret) {
-  const r = (S.send.res[key] || [])[i]; if (!r || !r.phone) return;
-  if (secret) {
-    let ok = false; try { await navigator.clipboard.writeText(r.text); ok = true; } catch (e) { try { const ta = document.createElement('textarea'); ta.value = r.text; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (x) {} }
-    if (ok) toast(t('copied'), 5000);
-    window.open('https://wa.me/' + r.phone, '_blank', 'noopener');
-  } else window.open('https://wa.me/' + r.phone + '?text=' + encodeURIComponent(r.text), '_blank', 'noopener');
+function paintResults(key) {
+  const results = S.send.res[key] || [], mt = S.send.meta[key], links = results.map((r, i) => r.wa === 'link' ? i : -1).filter(i => i >= 0), left = links.filter(i => !mt.done.has(i));
+  const e = results.filter(r => r.email === 'sent').length, w = results.filter(r => r.wa === 'sent').length + mt.done.size, n = results.filter(r => r.email !== 'sent' && r.wa !== 'sent' && r.wa !== 'link').length;
+  const next = left.length ? `<button class="btn ok wide" style="margin-top:10px" onclick="openWa('${key}',${left[0]})">${t('waNext', { n: esc(results[left[0]].name), i: links.length - left.length + 1, m: links.length })}</button><p class="mini">${t('waTip')}</p>`
+    : links.length ? `<div class="sendsum">${t('waAllDone')}</div>` : '';
+  $(mt.el).innerHTML = `<div class="sendsum">${t('sendDone', { e, w, n })}</div>${next}<table class="sendres"><tr><th>${t('colName')}</th>${mt.showCount ? `<th>${t('colCount')}</th>` : ''}<th>${t('colEmail')}</th><th>${t('colWa')}</th></tr>` +
+    results.map((r, i) => `<tr><td>${esc(r.name)}${r.reset ? ` <span class="tag">${t('newPwNote')}</span>` : ''}</td>${mt.showCount ? `<td>${r.count}</td>` : ''}<td>${stCell(r.email)}</td><td>${r.wa === 'link'
+      ? `<button class="btn sm ${mt.done.has(i) ? '' : 'ok'}" onclick="openWa('${key}',${i})">${mt.done.has(i) ? t('waOpened') : t('openWa')}</button>${isMobile() ? '' : ` <a href="#" class="mini" onclick="openWa('${key}',${i},1);return false">${t('waWeb')}</a>`}`
+      : stCell(r.wa)}</td></tr>`).join('') + '</table>';
+}
+async function openWa(key, i, web) {
+  const r = (S.send.res[key] || [])[i], mt = S.send.meta[key]; if (!r || !r.phone) return;
+  const text = encodeURIComponent(r.text);
+  // a copy on the clipboard as a fallback (and the only way a password reaches WhatsApp Web)
+  try { await navigator.clipboard.writeText(r.text); } catch (e) { try { const ta = document.createElement('textarea'); ta.value = r.text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } catch (x) {} }
+  if (web) { window.open('https://web.whatsapp.com/send?phone=' + r.phone + (mt.secret ? '' : '&text=' + text), '_blank', 'noopener'); if (mt.secret) toast(t('copied'), 6000); }
+  else if (isMobile() || mt.secret) { location.href = 'whatsapp://send?phone=' + r.phone + '&text=' + text; if (!isMobile()) toast(t('waDesktopHint'), 7000); }
+  else window.open('https://wa.me/' + r.phone + '?text=' + text, '_blank', 'noopener');
+  mt.done.add(i); paintResults(key);
 }
 function sendFilter() { return { kind: $('sfKind').value, days: +$('sfDays').value, from: $('sfFrom').value, to: $('sfTo').value, stage: $('sfStage').value, icode: $('sfInd').value }; }
 async function sendPrograms(preview) {
