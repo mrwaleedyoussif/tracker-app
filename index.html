@@ -15,7 +15,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <div id="offlineBar" class="offline" data-i18n="offline" hidden>📴 غير متصل بالإنترنت — تُعرض آخر بيانات محفوظة، ولن يُحفظ أي تعديل حتى يعود الاتصال.</div>
@@ -32,6 +32,7 @@
   <button data-v="all" onclick="go('all')"><span class="ic">🔎</span><span data-i18n="navAll">كل البرامج</span></button>
   <button data-v="dash" onclick="go('dash')"><span class="ic">📊</span><span data-i18n="navDash">المتابعة</span></button>
   <button data-v="people" onclick="go('people')" data-admin><span class="ic">👥</span><span data-i18n="navPeople">جهات الاتصال</span></button>
+  <button data-v="send" onclick="go('send')" data-admin><span class="ic">📤</span><span data-i18n="navSend">الإرسال</span></button>
 </nav>
 
 <main>
@@ -137,6 +138,41 @@
     <p class="mini" id="dashMeta"></p>
   </section>
 
+  <!-- SEND CENTRE (admin) -->
+  <section class="view" id="v-send">
+    <h2 class="h" data-i18n="sendTitle">📤 مركز الإرسال</h2>
+    <div class="notice" id="sendNeedServer" data-i18n="needServer" hidden></div>
+    <div class="card">
+      <h3 data-i18n="spTitle">📋 إرسال البرامج والمؤشرات</h3>
+      <div class="grid2">
+        <div><label class="f" data-i18n="spWhich">أي برامج؟</label><select id="sfKind" onchange="sendUi()"></select></div>
+        <div id="sfDaysW"><label class="f" data-i18n="within">خلال</label><select id="sfDays"></select></div>
+        <div id="sfFromW"><label class="f" data-i18n="from">من تاريخ</label><input type="date" id="sfFrom"></div>
+        <div id="sfToW"><label class="f" data-i18n="to">إلى تاريخ</label><input type="date" id="sfTo"></div>
+        <div><label class="f" data-i18n="stage">المرحلة</label><select id="sfStage" onchange="sendUi(true)"></select></div>
+        <div><label class="f" data-i18n="indicator">المؤشر</label><select id="sfInd"></select></div>
+        <div><label class="f" data-i18n="content">المحتوى</label><select id="sfDetail"></select></div>
+        <div><label class="f" data-i18n="sendTo">إلى من؟</label><select id="sfMode" onchange="sendUi()"></select></div>
+        <div id="sfScopeW"><label class="f" data-i18n="roleScope">بأي دور؟</label><select id="sfScope"></select></div>
+      </div>
+      <details class="picker" id="spPickW"><summary><span data-i18n="pickPeople">الأشخاص</span>: <b id="spPickSum"></b></summary><div class="pickbox" id="spPick"></div></details>
+      <label class="f" data-i18n="channel">طريقة الإرسال</label>
+      <div class="seg" id="spChan"></div>
+      <div class="row" style="margin-top:12px"><button class="btn" onclick="sendPrograms(true)" data-i18n="preview">👁 معاينة</button><button class="btn p" onclick="sendPrograms(false)" data-i18n="sendNow">📤 إرسال الآن</button></div>
+      <div id="spOut"></div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="pwTitle">🔑 إرسال كلمات المرور</h3>
+      <p class="mini" data-i18n="pwHint"></p>
+      <details class="picker" id="pwPickW" open><summary><span data-i18n="pickPeople">الأشخاص</span>: <b id="pwPickSum"></b></summary><div class="pickbox" id="pwPick"></div></details>
+      <label class="f" data-i18n="channel">طريقة الإرسال</label>
+      <div class="seg" id="pwChan"></div>
+      <div class="row" style="margin-top:12px"><button class="btn n" onclick="sendPasswords()" data-i18n="pwSend">🔑 إرسال كلمة المرور</button></div>
+      <div id="pwOut"></div>
+    </div>
+    <p class="mini" id="sendWaHint"></p>
+  </section>
+
   <!-- PEOPLE (admin) -->
   <section class="view" id="v-people">
     <div class="notice" data-i18n="peopleNotice">عبّئ البريد الإلكتروني ورقم الواتساب.</div>
@@ -202,7 +238,7 @@
 <div class="updatebar" id="updateBar" hidden><span data-i18n="updateBar">تحديث جديد للتطبيق متاح</span> <button class="btn sm" onclick="location.reload()" data-i18n="updateNow">تحديث الآن</button></div>
 
 <script src="config.js?v=2"></script>
-<script src="i18n.js?v=3"></script>
-<script src="app.js?v=2"></script>
+<script src="i18n.js?v=4"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

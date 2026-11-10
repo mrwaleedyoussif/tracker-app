@@ -102,3 +102,16 @@ details summary{cursor:pointer;font-weight:600;color:var(--navy)}
 .chips.roles{margin-bottom:4px}
 .chips .rolechip.on{background:#1f3864;color:#fff;border-color:#1f3864}
 html[dir=ltr] body{font-family:"Segoe UI",Roboto,Arial,Tahoma,sans-serif}
+
+/* v1.3 — send centre + access */
+.picker{margin:12px 0;border:1px solid #cfd6e0;border-radius:12px;padding:8px 12px;background:#fafbfd}
+.picker summary{cursor:pointer;font-weight:600;font-size:14px}
+.pickbox{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 12px;margin-top:8px;max-height:260px;overflow:auto}
+.pickbox label{font-size:13px;display:flex;align-items:center;gap:6px;padding:3px 0}
+.pickbox .tools{grid-column:1/-1;display:flex;gap:8px;margin-bottom:4px}
+.sendres{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.sendres th{background:#eef2f8;text-align:start;padding:6px 8px;font-weight:700}
+.sendres td{padding:6px 8px;border-bottom:1px solid #e6eaf1;vertical-align:middle}
+.sendsum{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef8f6;border:1px solid #bfe3dc;font-size:14px;font-weight:600}
+.prow select.acc{font-size:12px;padding:4px 6px;min-width:0}
+.seg button.on{background:#1f3864}

@@ -39,6 +39,7 @@ const toast = (m, ms = 2600) => { const t = $('toast'); t.textContent = m; t.cla
 const fmtD = iso => { if (!iso) return '—'; const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };
 const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const isAdmin = () => !!(S.me && S.me.appRole === 'مدير');
+const isOwner = () => !!(S.me && S.me.owner);
 const myName = () => (S.me && S.me.name) || '';
 const nkey = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[ًٌٍَُِّْ]/g, '');
 /* same rule as owns_() in the sheet: exact مسؤول البرنامج / مسؤول المؤشر, or my name inside a multi-person «المكلف» cell */
@@ -71,12 +72,12 @@ async function api(action, payload = {}, { timeout = 60000 } = {}) {
 // ------------------------------------------------------------ navigation
 function go(v) {
   if (!S.me && !['login', 'loading'].includes(v)) v = 'login';
-  if (v === 'people' && !isAdmin()) v = 'me';
+  if ((v === 'people' || v === 'send') && !isAdmin()) v = 'me';
   document.querySelectorAll('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   if (v !== 'mine') $('mineList').innerHTML = ''; if (v !== 'all') $('allList').innerHTML = '';   // cards share ids → only one list in the DOM
   window.scrollTo(0, 0);
-  if (v === 'mine') renderMine(); if (v === 'quick') renderQuick(); if (v === 'all') renderAll(); if (v === 'dash') loadDash(false); if (v === 'people') renderPeople(); if (v === 'me') renderMe();
+  if (v === 'mine') renderMine(); if (v === 'quick') renderQuick(); if (v === 'all') renderAll(); if (v === 'dash') loadDash(false); if (v === 'people') renderPeople(); if (v === 'send') renderSend(); if (v === 'me') renderMe();
 }
 function applyRole() {
   const adm = isAdmin();
@@ -324,13 +325,14 @@ async function sendTest() { toast(t('sending'), 15000); try { const r = await ap
 function renderPeople() {
   const ppl = S.boot.people; const withMail = ppl.filter(p => p.email).length;
   $('peopleCount').textContent = t('peopleCount', { m: withMail, t: ppl.length, w: ppl.filter(p => p.phone).length, p: ppl.filter(p => p.hasPin).length });
-  $('peopleList').innerHTML = ppl.map((p, i) => `<div class="prow" style="${p.role === 'مدير المدرسة' || p.role === 'وكيل الشؤون الأكاديمية' ? 'border-color:#f1d98a;background:#fffdf3' : ''}">
-      <div class="nm"><input type="text" id="pn-${i}" value="${esc(p.name)}" placeholder="${t('name')}"><div class="mini">${esc(tRole(p.role))} · ${esc(tStage(p.stage))} · ${t('pplLine', { e: S.programs.filter(x => isExec(p.name, x)).length, f: S.programs.filter(x => isFollow(p.name, x)).length })} · ${p.appRole === 'مدير' ? t('adminShort') : t('userShort')} · ${p.hasPin ? '🔑' : t('noPw')}</div></div>
+  $('peopleList').innerHTML = ppl.map((p, i) => `<div class="prow" style="${['مدير المدرسة', 'وكيل الشؤون الأكاديمية', 'المشرف الأكاديمي', 'المالك والمطوّر'].includes(p.role) ? 'border-color:#f1d98a;background:#fffdf3' : ''}">
+      <div class="nm"><input type="text" id="pn-${i}" value="${esc(p.name)}" placeholder="${t('name')}"><div class="mini">${esc(tRole(p.role))} · ${esc(tStage(p.stage))} · ${t('pplLine', { e: S.programs.filter(x => isExec(p.name, x)).length, f: S.programs.filter(x => isFollow(p.name, x)).length })} · ${p.owner ? '👑 ' + t('ownerTag') : p.appRole === 'مدير' ? t('adminShort') : p.appRole === 'موقوف' ? t('suspendedShort') : t('userShort')} · ${p.hasPin ? '🔑' : t('noPw')}</div>
+        ${isOwner() && !p.owner ? `<select class="acc" onchange="setAccess(${i},this)" title="${t('access')}">${[['مدير', 'accAdmin'], ['مسؤول', 'accUser'], ['موقوف', 'accSuspended']].map(a => `<option value="${a[0]}" ${p.appRole === a[0] ? 'selected' : ''}>${t(a[1])}</option>`).join('')}</select>` : ''}</div>
       <div><input type="email" id="pe-${i}" value="${esc(p.email || '')}" placeholder="${t('emailPh')}"></div>
       <div><input type="tel" id="pp-${i}" value="${esc(p.phone || '')}" placeholder="9665xxxxxxxx"></div>
       <label class="mini"><input type="checkbox" id="pm-${i}" ${p.emailOn ? 'checked' : ''}> ${t('email')}</label>
       <label class="mini"><input type="checkbox" id="pw-${i}" ${p.waOn ? 'checked' : ''}> ${t('wa')}</label>
-      <div class="row" style="gap:4px"><button class="btn sm p" onclick="savePerson(${i})" title="${t('savedOk')}">💾</button><button class="btn sm" onclick="adminPin(${i})" title="${t('setPwTitle')}">🔑</button></div>
+      <div class="row" style="gap:4px"><button class="btn sm p" onclick="savePerson(${i})" title="${t('savedOk')}">💾</button><button class="btn sm" onclick="adminPin(${i})" title="${t('setPwTitle')}">🔑</button><button class="btn sm" onclick="sendToPerson(${i})" title="${t('sendToPerson')}">📤</button></div>
     </div>`).join('');
 }
 async function savePerson(i) {
@@ -351,6 +353,97 @@ async function addPerson() {
   if (!payload.name) return toast(t('needName'));
   toast(t('adding'), 15000);
   try { await api('savePerson', { p: payload }); const b = await api('bootstrap'); S.boot = b; renderPeople(); $('pName').value = $('pEmail').value = $('pPhone').value = ''; toast(t('personAdded')); } catch (e) { toast('❌ ' + e.message, 6000); }
+}
+
+async function setAccess(i, sel) {
+  const p = S.boot.people[i], access = sel.value, lab = sel.options[sel.selectedIndex].textContent;
+  if (!confirm(t('confirmAccess', { n: p.name, a: lab }))) { sel.value = p.appRole; return; }
+  try { await api('setAccess', { row: p.row, access }); const b = await api('bootstrap'); S.boot = b; renderPeople(); toast(t('accSaved')); }
+  catch (e) { sel.value = p.appRole; toast('❌ ' + sendErr(e), 6000); }
+}
+function sendToPerson(i) { const row = S.boot.people[i].row; S.send.sp = new Set([row]); S.send.pw = new Set([row]); go('send'); }
+
+// ------------------------------------------------------------ send centre (admins)
+S.send = { sp: new Set(), pw: new Set(), spChan: 'email', pwChan: 'email', res: {} };
+const sendErr = e => e.code === 'UNKNOWN_ACTION' ? t('needServer') : e.message;
+const sendable = () => S.boot.people.filter(p => p.name && p.appRole !== 'موقوف');
+function renderSend() {
+  if (!isAdmin()) return;
+  $('sendNeedServer').hidden = (S.boot.api || 0) >= 3;
+  const opt = (v, l, cur) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`;
+  const keep = (id, d) => $(id).value || d;
+  const kind = keep('sfKind', 'all'), days = keep('sfDays', '7'), stage = $('sfStage').value, detail = keep('sfDetail', 'programs'), mode = keep('sfMode', 'each'), scope = keep('sfScope', 'all');
+  $('sfKind').innerHTML = [['all', 'fkAll'], ['late', 'fkLate'], ['done', 'fkDone'], ['upcoming', 'fkUpcoming'], ['ending', 'fkEnding'], ['running', 'fkRunning'], ['notstarted', 'fkNotStarted'], ['nodate', 'fkNoDate'], ['period', 'fkPeriod']].map(x => opt(x[0], t(x[1]), kind)).join('');
+  $('sfDays').innerHTML = ['3', '7', '14', '30', '60'].map(n => opt(n, t('nDays', { n }), days)).join('');
+  $('sfStage').innerHTML = opt('', t('allStages'), stage) + S.boot.stages.map(x => opt(x, tStage(x), stage)).join('');
+  $('sfDetail').innerHTML = opt('programs', t('ctPrograms'), detail) + opt('indicators', t('ctIndicators'), detail);
+  $('sfMode').innerHTML = opt('each', t('modeEach'), mode) + opt('list', t('modeList'), mode);
+  $('sfScope').innerHTML = [['all', 'rsAll'], ['exec', 'rsExec'], ['follow', 'rsFollow']].map(x => opt(x[0], t(x[1]), scope)).join('');
+  [['spChan', 'spChan'], ['pwChan', 'pwChan']].forEach(([el, key]) => { $(el).innerHTML = [['email', 'chEmail'], ['wa', 'chWa'], ['both', 'chBoth']].map(x => `<button type="button" class="${S.send[key] === x[0] ? 'on' : ''}" onclick="S.send.${key}='${x[0]}';renderSend()">${t(x[1])}</button>`).join(''); });
+  $('sendWaHint').textContent = S.boot.waEnabled ? '' : t('waHint');
+  sendUi(true); drawPicker('sp'); drawPicker('pw');
+}
+function sendUi(refillInd) {
+  const kind = $('sfKind').value, mode = $('sfMode').value;
+  $('sfDaysW').hidden = !['upcoming', 'ending'].includes(kind); $('sfFromW').hidden = $('sfToW').hidden = kind !== 'period'; $('sfScopeW').hidden = mode !== 'each';
+  if (refillInd) { const st = $('sfStage').value, cur = $('sfInd').value, seen = new Set();
+    const inds = S.boot.indicators.filter(i => (!st || i.stage === st) && !seen.has(i.code) && seen.add(i.code));
+    $('sfInd').innerHTML = `<option value="">${t('allIndicators')}</option>` + inds.map(i => `<option value="${esc(i.code)}" ${i.code === cur ? 'selected' : ''}>${esc(i.code)} – ${esc(tInd(i.code, i.name))}</option>`).join(''); }
+  pickSum('sp');
+}
+function drawPicker(k) {
+  const sel = S.send[k], ppl = sendable();
+  $(k + 'Pick').innerHTML = `<div class="tools"><button type="button" class="btn sm" onclick="pickAll('${k}',true)">${t('selectAll')}</button><button type="button" class="btn sm" onclick="pickAll('${k}',false)">${t('clearSel')}</button></div>` +
+    ppl.map(p => `<label><input type="checkbox" ${sel.has(p.row) ? 'checked' : ''} onchange="pickOne('${k}',${p.row},this.checked)"> ${esc(p.name)} <span class="mini">${p.email ? '✉️' : ''}${p.phone ? '💬' : ''}</span></label>`).join('');
+  pickSum(k);
+}
+function pickOne(k, row, on) { if (on) S.send[k].add(row); else S.send[k].delete(row); pickSum(k); }
+function pickAll(k, on) { S.send[k] = new Set(on ? sendable().map(p => p.row) : []); drawPicker(k); }
+function pickSum(k) { const n = S.send[k].size; $(k + 'PickSum').textContent = n ? t('nSelected', { n }) : (k === 'sp' && $('sfMode').value === 'each' ? t('everyoneDefault') : t('nSelected', { n: 0 })); }
+function stCell(v) { return v === 'sent' ? t('stSent') : v === 'none' ? t('stNone') : v === 'quota' ? t('stQuota') : v === 'forbidden' ? t('stForbidden') : v === 'suspended' ? t('stSuspended') : v === '-' ? '' : String(v).startsWith('error') ? `<span title="${esc(v)}">${t('stError')}</span>` : esc(v); }
+/** results table; WhatsApp «link» rows get a button that opens the sender's own WhatsApp (a password message is copied, never put in the link) */
+function drawResults(el, key, results, secret, showCount) {
+  S.send.res[key] = results;
+  const e = results.filter(r => r.email === 'sent').length, w = results.filter(r => r.wa === 'sent' || r.wa === 'link').length, n = results.filter(r => r.email !== 'sent' && r.wa !== 'sent' && r.wa !== 'link').length;
+  $(el).innerHTML = `<div class="sendsum">${t('sendDone', { e, w, n })}</div><table class="sendres"><tr><th>${t('colName')}</th>${showCount ? `<th>${t('colCount')}</th>` : ''}<th>${t('colEmail')}</th><th>${t('colWa')}</th></tr>` +
+    results.map((r, i) => `<tr><td>${esc(r.name)}${r.reset ? ` <span class="tag">${t('newPwNote')}</span>` : ''}</td>${showCount ? `<td>${r.count}</td>` : ''}<td>${stCell(r.email)}</td><td>${r.wa === 'link' ? `<button class="btn sm ok" onclick="openWa('${key}',${i},${secret ? 1 : 0})">${t(secret ? 'copyOpenWa' : 'openWa')}</button>` : stCell(r.wa)}</td></tr>`).join('') + '</table>';
+}
+async function openWa(key, i, secret) {
+  const r = (S.send.res[key] || [])[i]; if (!r || !r.phone) return;
+  if (secret) {
+    let ok = false; try { await navigator.clipboard.writeText(r.text); ok = true; } catch (e) { try { const ta = document.createElement('textarea'); ta.value = r.text; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (x) {} }
+    if (ok) toast(t('copied'), 5000);
+    window.open('https://wa.me/' + r.phone, '_blank', 'noopener');
+  } else window.open('https://wa.me/' + r.phone + '?text=' + encodeURIComponent(r.text), '_blank', 'noopener');
+}
+function sendFilter() { return { kind: $('sfKind').value, days: +$('sfDays').value, from: $('sfFrom').value, to: $('sfTo').value, stage: $('sfStage').value, icode: $('sfInd').value }; }
+async function sendPrograms(preview) {
+  const mode = $('sfMode').value, rows = [...S.send.sp];
+  if (mode === 'list' && !rows.length) { $('spPickW').open = true; return toast(t('pickSomeone')); }
+  const payload = { filter: sendFilter(), mode, rows, roleScope: $('sfScope').value, detail: $('sfDetail').value, channel: S.send.spChan };
+  const out = $('spOut');
+  try {
+    out.innerHTML = '<div class="empty"><span class="spin"></span></div>';
+    const pv = await api('sendPrograms', { ...payload, preview: true });
+    const head = `<div class="sendsum">${esc(t('previewLine', { t: pv.title, m: pv.matched, r: pv.recipients.length }))}${payload.channel !== 'wa' ? '<br><span class="mini">' + t('quotaLine', { q: pv.quota }) + '</span>' : ''}</div>`;
+    if (!pv.recipients.length) { out.innerHTML = head + `<div class="empty">${t('noRecipients')}</div>`; return; }
+    if (preview) { out.innerHTML = head + `<table class="sendres"><tr><th>${t('colName')}</th><th>${t('colCount')}</th><th>${t('colEmail')}</th><th>${t('colWa')}</th></tr>` + pv.recipients.map(r => `<tr><td>${esc(r.name)}</td><td>${r.count}</td><td>${r.hasEmail ? '✉️ ' + t('stReady') : t('stNone')}</td><td>${r.hasPhone ? '💬 ' + t('stReady') : t('stNone')}</td></tr>`).join('') + '</table>'; return; }
+    if (!confirm(t('confirmSend', { r: pv.recipients.length }))) { out.innerHTML = head; return; }
+    toast(t('sendingN'), 60000);
+    const r = await api('sendPrograms', payload, { timeout: 240000 });
+    drawResults('spOut', 'sp', r.results, false, true); toast(t('sendDone', { e: r.results.filter(x => x.email === 'sent').length, w: r.results.filter(x => x.wa === 'sent' || x.wa === 'link').length, n: r.results.filter(x => x.email !== 'sent' && x.wa !== 'sent' && x.wa !== 'link').length }), 5000);
+  } catch (e) { out.innerHTML = ''; toast('❌ ' + sendErr(e), 8000); }
+}
+async function sendPasswords() {
+  const rows = [...S.send.pw];
+  if (!rows.length) { $('pwPickW').open = true; return toast(t('pickSomeone')); }
+  if (!confirm(t('confirmPw', { r: rows.length }))) return;
+  try {
+    $('pwOut').innerHTML = '<div class="empty"><span class="spin"></span></div>'; toast(t('sendingN'), 60000);
+    const r = await api('sendPassword', { rows, channel: S.send.pwChan }, { timeout: 240000 });
+    drawResults('pwOut', 'pw', r.results, true, false); toast(t('sendDone', { e: r.results.filter(x => x.email === 'sent').length, w: r.results.filter(x => x.wa === 'sent' || x.wa === 'link').length, n: r.results.filter(x => x.email !== 'sent' && x.wa !== 'sent' && x.wa !== 'link').length }), 5000);
+    try { S.boot = await api('bootstrap'); } catch (e) {}
+  } catch (e) { $('pwOut').innerHTML = ''; toast('❌ ' + sendErr(e), 8000); }
 }
 
 // ------------------------------------------------------------ me
