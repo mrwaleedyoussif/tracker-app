@@ -15,57 +15,59 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
-<div id="offlineBar" class="offline" hidden>📴 غير متصل بالإنترنت — تُعرض آخر بيانات محفوظة، ولن يُحفظ أي تعديل حتى يعود الاتصال.</div>
+<div id="offlineBar" class="offline" data-i18n="offline" hidden>📴 غير متصل بالإنترنت — تُعرض آخر بيانات محفوظة، ولن يُحفظ أي تعديل حتى يعود الاتصال.</div>
 <header>
   <img src="icons/icon-192.png" alt="" class="logo">
-  <h1>متتبع برامج المؤشرات ١٤٤٨</h1>
+  <h1 data-i18n="appTitle">متتبع برامج المؤشرات ١٤٤٨</h1>
+  <button class="chip lang" id="langBtn" onclick="setLang(S.lang==='en'?'ar':'en')">🌐 English</button>
   <button class="chip" id="userChip" onclick="go('me')">👤 تسجيل الدخول</button>
 </header>
 
 <nav id="nav" hidden>
-  <button data-v="mine" onclick="go('mine')"><span class="ic">📋</span><span>برامجي</span></button>
-  <button data-v="quick" onclick="go('quick')"><span class="ic">⚡</span><span>إدخال سريع</span></button>
-  <button data-v="all" onclick="go('all')"><span class="ic">🔎</span><span>كل البرامج</span></button>
-  <button data-v="dash" onclick="go('dash')"><span class="ic">📊</span><span>المتابعة</span></button>
-  <button data-v="people" onclick="go('people')" data-admin><span class="ic">👥</span><span>جهات الاتصال</span></button>
+  <button data-v="mine" onclick="go('mine')"><span class="ic">📋</span><span data-i18n="navMine">برامجي</span></button>
+  <button data-v="quick" onclick="go('quick')"><span class="ic">⚡</span><span data-i18n="navQuick">إدخال سريع</span></button>
+  <button data-v="all" onclick="go('all')"><span class="ic">🔎</span><span data-i18n="navAll">كل البرامج</span></button>
+  <button data-v="dash" onclick="go('dash')"><span class="ic">📊</span><span data-i18n="navDash">المتابعة</span></button>
+  <button data-v="people" onclick="go('people')" data-admin><span class="ic">👥</span><span data-i18n="navPeople">جهات الاتصال</span></button>
 </nav>
 
 <main>
   <!-- LOADING -->
   <section class="view on" id="v-loading">
-    <div class="center"><div class="spin big"></div><p class="meta">جارٍ التحميل…</p></div>
+    <div class="center"><div class="spin big"></div><p class="meta" data-i18n="loading">جارٍ التحميل…</p></div>
   </section>
 
   <!-- LOGIN -->
   <section class="view" id="v-login">
     <div class="card login">
       <img src="icons/icon-192.png" alt="" class="hero">
-      <h2>تسجيل الدخول</h2>
-      <p class="meta">اختر اسمك ثم أدخل رمز الدخول (٤ أرقام) الذي استلمته من إدارة المدرسة.</p>
-      <label class="f" for="loginName">الاسم</label>
+      <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
+      <p class="meta" data-i18n="loginIntro">اختر اسمك ثم أدخل كلمة المرور التي استلمتها من إدارة المدرسة.</p>
+      <label class="f" for="loginName" data-i18n="name">الاسم</label>
       <select id="loginName"></select>
-      <label class="f" for="loginPin" style="margin-top:10px">رمز الدخول (PIN)</label>
-      <input type="password" id="loginPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
-      <button class="btn p wide" id="loginBtn" onclick="login()" style="margin-top:14px">دخول</button>
+      <label class="f" for="loginPin" style="margin-top:10px" data-i18n="password">كلمة المرور</label>
+      <input type="password" id="loginPin" maxlength="64" placeholder="••••••••" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')login()">
+      <button class="btn p wide" id="loginBtn" onclick="login()" style="margin-top:14px" data-i18n="loginBtn">دخول</button>
       <p class="mini" id="loginHint" style="margin-top:10px"></p>
-      <p class="mini">نسيت الرمز؟ اطلب من مدير المدرسة أو مشرف المتتبع تغييره لك من ورقة «المسؤولون».</p>
+      <p class="mini" data-i18n="forgot">نسيت كلمة المرور؟ اطلب من مدير المدرسة أو مشرف المتتبع تعيين كلمة جديدة لك.</p>
     </div>
     <div class="card" id="installCard" hidden>
-      <h3>📲 ثبّت التطبيق على جهازك</h3>
+      <h3 data-i18n="installTitle">📲 ثبّت التطبيق على جهازك</h3>
       <p class="meta" id="installHint"></p>
-      <button class="btn n" id="installBtn" onclick="installApp()" hidden>تثبيت التطبيق</button>
+      <button class="btn n" id="installBtn" onclick="installApp()" hidden data-i18n="installBtn">تثبيت التطبيق</button>
     </div>
   </section>
 
   <!-- MINE -->
   <section class="view" id="v-mine">
     <div class="row between">
-      <h2 class="h">برامج <span id="mineName"></span></h2>
+      <h2 class="h"><span data-i18n="mineTitle">برامج</span> <span id="mineName"></span></h2>
       <span class="mini" id="mineCount"></span>
     </div>
+    <div class="chips roles" id="mineRoles"></div>
     <div class="chips" id="mineChips"></div>
     <div id="mineList" class="list"></div>
   </section>
@@ -73,28 +75,28 @@
   <!-- QUICK -->
   <section class="view" id="v-quick">
     <div class="card">
-      <h3>⚡ إدخال سريع للتواريخ والحالة</h3>
+      <h3 data-i18n="quickTitle">⚡ إدخال سريع للتواريخ والحالة</h3>
       <p class="meta" id="quickHint">اختر المرحلة ثم المؤشر، عبّئ تواريخ عدة برامج دفعة واحدة واضغط «حفظ الكل».</p>
       <div class="grid2">
-        <div><label class="f">المرحلة</label><select id="qStage" onchange="fillQInd()"></select></div>
-        <div><label class="f">المؤشر</label><select id="qInd" onchange="renderQuick()"></select></div>
+        <div><label class="f" data-i18n="stage">المرحلة</label><select id="qStage" onchange="fillQInd()"></select></div>
+        <div><label class="f" data-i18n="indicator">المؤشر</label><select id="qInd" onchange="renderQuick()"></select></div>
       </div>
     </div>
     <div id="quickList" class="list"></div>
     <div class="sticky-actions" id="quickActions" hidden>
-      <button class="btn p" onclick="saveQuick()">💾 حفظ الكل</button>
-      <button class="btn" onclick="renderQuick()">إلغاء التعديلات</button>
+      <button class="btn p" onclick="saveQuick()" data-i18n="saveAll">💾 حفظ الكل</button>
+      <button class="btn" onclick="renderQuick()" data-i18n="discard">إلغاء التعديلات</button>
     </div>
-    <details class="card" style="margin-top:14px"><summary>➕ إضافة برنامج جديد (غير موجود في المنصة)</summary>
+    <details class="card" style="margin-top:14px"><summary data-i18n="addProgTitle">➕ إضافة برنامج جديد (غير موجود في المنصة)</summary>
       <div class="grid2" style="margin-top:10px">
-        <div><label class="f">المرحلة</label><select id="nStage" onchange="fillNInd()"></select></div>
-        <div><label class="f">المؤشر</label><select id="nInd"></select></div>
-        <div><label class="f">اسم البرنامج</label><input type="text" id="nName" placeholder="مثال: أسبوع القراءة"></div>
-        <div><label class="f">مسؤول البرنامج</label><select id="nResp"></select></div>
-        <div><label class="f">تاريخ البداية</label><input type="date" id="nStart"></div>
-        <div><label class="f">تاريخ النهاية</label><input type="date" id="nEnd"></div>
+        <div><label class="f" data-i18n="stage">المرحلة</label><select id="nStage" onchange="fillNInd()"></select></div>
+        <div><label class="f" data-i18n="indicator">المؤشر</label><select id="nInd"></select></div>
+        <div><label class="f" data-i18n="progName">اسم البرنامج</label><input type="text" id="nName" data-i18n-ph="progNamePh" placeholder="مثال: أسبوع القراءة"></div>
+        <div><label class="f" data-i18n="progExec">المنفّذ (مسؤول التنفيذ)</label><select id="nResp"></select></div>
+        <div><label class="f" data-i18n="startDate">تاريخ البداية</label><input type="date" id="nStart"></div>
+        <div><label class="f" data-i18n="endDate">تاريخ النهاية</label><input type="date" id="nEnd"></div>
       </div>
-      <div style="margin-top:10px"><button class="btn n" onclick="addProgram()">إضافة</button></div>
+      <div style="margin-top:10px"><button class="btn n" onclick="addProgram()" data-i18n="add">إضافة</button></div>
     </details>
   </section>
 
@@ -102,7 +104,7 @@
   <section class="view" id="v-all">
     <div class="card">
       <div class="grid2">
-        <div><input type="search" id="q" placeholder="🔎 ابحث باسم البرنامج أو المؤشر أو المسؤول…" oninput="renderAll()"></div>
+        <div><input type="search" id="q" data-i18n-ph="searchPh" placeholder="🔎 ابحث باسم البرنامج أو المؤشر أو المسؤول…" oninput="renderAll()"></div>
         <div class="row">
           <select id="fStage" class="grow" onchange="renderAll()"></select>
           <select id="fStatus" class="grow" onchange="renderAll()"></select>
@@ -116,39 +118,39 @@
   <!-- DASH -->
   <section class="view" id="v-dash">
     <div class="row between" style="margin-bottom:8px">
-      <h2 class="h">📊 لوحة المتابعة</h2>
+      <h2 class="h" data-i18n="dashTitle">📊 لوحة المتابعة</h2>
       <div class="row">
-        <button class="btn sm" onclick="loadDash(true)">🔄 تحديث</button>
-        <button class="btn sm run" onclick="runSync()" data-admin data-sheet-only>⬇️ مزامنة من المنصة</button>
-        <button class="btn sm n" onclick="runCheck()" data-admin data-sheet-only>🔔 إرسال تنبيهات اليوم</button>
-        <button class="btn sm" onclick="sendTest()" data-admin data-sheet-only>✉️ إشعار تجريبي لي</button>
+        <button class="btn sm" onclick="loadDash(true)" data-i18n="refresh">🔄 تحديث</button>
+        <button class="btn sm run" onclick="runSync()" data-admin data-sheet-only data-i18n="syncBtn">⬇️ مزامنة من المنصة</button>
+        <button class="btn sm n" onclick="runCheck()" data-admin data-sheet-only data-i18n="checkBtn">🔔 إرسال تنبيهات اليوم</button>
+        <button class="btn sm" onclick="sendTest()" data-admin data-sheet-only data-i18n="testBtn">✉️ إشعار تجريبي لي</button>
       </div>
     </div>
     <div id="dashNotice"></div>
     <div class="kpis" id="kpis"></div>
     <div class="grid2">
-      <div class="card"><h3>المراحل</h3><div id="stageBars"></div></div>
-      <div class="card"><h3>🔔 تنبيهات اليوم</h3><div id="todayList" class="list"></div></div>
-      <div class="card"><h3>⛔ برامج متأخرة</h3><div id="lateList" class="list"></div></div>
-      <div class="card"><h3>📅 الأسبوع القادم</h3><div id="weekList" class="list"></div></div>
+      <div class="card"><h3 data-i18n="stages">المراحل</h3><div id="stageBars"></div></div>
+      <div class="card"><h3 data-i18n="todayAlerts">🔔 تنبيهات اليوم</h3><div id="todayList" class="list"></div></div>
+      <div class="card"><h3 data-i18n="lateProgs">⛔ برامج متأخرة</h3><div id="lateList" class="list"></div></div>
+      <div class="card"><h3 data-i18n="nextWeek">📅 الأسبوع القادم</h3><div id="weekList" class="list"></div></div>
     </div>
     <p class="mini" id="dashMeta"></p>
   </section>
 
   <!-- PEOPLE (admin) -->
   <section class="view" id="v-people">
-    <div class="notice">عبّئ البريد الإلكتروني ورقم الواتساب (بالصيغة الدولية بدون + مثل <b>9665xxxxxxxx</b>). الصفان الأولان لمدير المدرسة ووكيل الشؤون الأكاديمية — بدونهما لا تصل تنبيهات الإدارة. رموز الدخول (PIN) تُدار من ورقة «المسؤولون» في الملف.</div>
+    <div class="notice" data-i18n="peopleNotice">عبّئ البريد الإلكتروني ورقم الواتساب.</div>
     <p class="mini" id="peopleCount"></p>
     <div id="peopleList" class="list"></div>
-    <details class="card" style="margin-top:14px"><summary>➕ إضافة شخص</summary>
+    <details class="card" style="margin-top:14px"><summary data-i18n="addPerson">➕ إضافة شخص</summary>
       <div class="grid2" style="margin-top:10px">
-        <div><label class="f">الاسم</label><input type="text" id="pName"></div>
-        <div><label class="f">الدور</label><select id="pRole"><option>مسؤول مؤشر/برنامج</option><option>مدير المدرسة</option><option>وكيل الشؤون الأكاديمية</option><option>منسق</option></select></div>
-        <div><label class="f">البريد</label><input type="email" id="pEmail"></div>
-        <div><label class="f">واتساب</label><input type="tel" id="pPhone" placeholder="9665xxxxxxxx"></div>
+        <div><label class="f" data-i18n="name">الاسم</label><input type="text" id="pName"></div>
+        <div><label class="f" data-i18n="role">الدور</label><select id="pRole"><option value="مسؤول مؤشر/برنامج" data-i18n-role>مسؤول مؤشر/برنامج</option><option value="مكلف بالتنفيذ" data-i18n-role>مكلف بالتنفيذ</option><option value="مدير المدرسة" data-i18n-role>مدير المدرسة</option><option value="وكيل الشؤون الأكاديمية" data-i18n-role>وكيل الشؤون الأكاديمية</option><option value="منسق" data-i18n-role>منسق</option></select></div>
+        <div><label class="f" data-i18n="emailF">البريد</label><input type="email" id="pEmail"></div>
+        <div><label class="f" data-i18n="waF">واتساب</label><input type="tel" id="pPhone" placeholder="9665xxxxxxxx"></div>
       </div>
-      <div style="margin-top:10px"><button class="btn n" onclick="addPerson()">إضافة</button></div>
-      <p class="mini">بعد الإضافة شغّل «إعداد التطبيق» من قائمة الملف ليُنشأ له رمز دخول، أو اكتب الرمز يدوياً في عمود «رمز الدخول».</p>
+      <div style="margin-top:10px"><button class="btn n" onclick="addPerson()" data-i18n="add">إضافة</button></div>
+      <p class="mini" data-i18n="addPersonHint">بعد الإضافة عيّن له كلمة مرور بزر 🔑.</p>
     </details>
   </section>
 
@@ -158,32 +160,38 @@
       <h3 id="meName">—</h3>
       <p class="meta" id="meRole"></p>
       <div class="grid2" style="margin-top:8px">
-        <div><label class="f">بريدي الإلكتروني (لاستلام التنبيهات)</label><input type="email" id="meEmail"></div>
-        <div><label class="f">واتساب (9665xxxxxxxx)</label><input type="tel" id="mePhone"></div>
+        <div><label class="f" data-i18n="myEmail">بريدي الإلكتروني (لاستلام التنبيهات)</label><input type="email" id="meEmail"></div>
+        <div><label class="f" data-i18n="myWa">واتساب (9665xxxxxxxx)</label><input type="tel" id="mePhone"></div>
       </div>
       <div class="row" style="margin-top:10px">
-        <label class="mini"><input type="checkbox" id="meEmailOn"> تنبيه بالبريد</label>
-        <label class="mini"><input type="checkbox" id="meWaOn"> تنبيه بالواتساب</label>
-        <button class="btn p sm" onclick="saveMe()">💾 حفظ بياناتي</button>
+        <label class="mini"><input type="checkbox" id="meEmailOn"> <span data-i18n="emailAlert">تنبيه بالبريد</span></label>
+        <label class="mini"><input type="checkbox" id="meWaOn"> <span data-i18n="waAlert">تنبيه بالواتساب</span></label>
+        <button class="btn p sm" onclick="saveMe()" data-i18n="saveMe">💾 حفظ بياناتي</button>
       </div>
     </div>
     <div class="card">
-      <h3>🔑 تغيير رمز الدخول</h3>
+      <div class="row between"><h3 data-i18n="language" style="margin:0">🌐 اللغة</h3>
+        <select id="langSel" onchange="setLang(this.value)" style="max-width:180px"><option value="ar">العربية</option><option value="en">English</option></select></div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="changePw">🔑 تغيير كلمة المرور</h3>
+      <p class="mini" data-i18n="pwRule">8 خانات على الأقل، وتحتوي حروفاً إنجليزية وأرقاماً ورمزاً واحداً على الأقل.</p>
       <div class="grid2">
-        <div><label class="f">الرمز الحالي</label><input type="password" id="pinOld" inputmode="numeric" maxlength="4"></div>
-        <div><label class="f">الرمز الجديد (٤ أرقام)</label><input type="password" id="pinNew" inputmode="numeric" maxlength="4"></div>
+        <div><label class="f" data-i18n="curPw">كلمة المرور الحالية</label><input type="password" id="pinOld" maxlength="64" autocomplete="current-password"></div>
+        <div><label class="f" data-i18n="newPw">كلمة المرور الجديدة</label><input type="password" id="pinNew" maxlength="64" autocomplete="new-password"></div>
+        <div><label class="f" data-i18n="newPw2">تأكيد كلمة المرور الجديدة</label><input type="password" id="pinNew2" maxlength="64" autocomplete="new-password"></div>
       </div>
-      <div style="margin-top:10px"><button class="btn n sm" onclick="changePin()">تغيير الرمز</button></div>
+      <div style="margin-top:10px"><button class="btn n sm" onclick="changePin()" data-i18n="changePwBtn">تغيير كلمة المرور</button></div>
     </div>
     <div class="card" id="installCard2" hidden>
-      <h3>📲 تثبيت التطبيق</h3>
+      <h3 data-i18n="installTitle2">📲 تثبيت التطبيق</h3>
       <p class="meta" id="installHint2"></p>
-      <button class="btn n sm" id="installBtn2" onclick="installApp()" hidden>تثبيت التطبيق</button>
+      <button class="btn n sm" id="installBtn2" onclick="installApp()" hidden data-i18n="installBtn">تثبيت التطبيق</button>
     </div>
     <div class="card">
       <div class="row between">
-        <div><b>الملف الأصلي (Google Sheets)</b><div class="mini" id="sheetLinkWrap">متاح للمدراء فقط</div></div>
-        <button class="btn danger sm" onclick="logout()">🚪 تسجيل الخروج</button>
+        <div><b data-i18n="sheetFile">الملف الأصلي (Google Sheets)</b><div class="mini" id="sheetLinkWrap">متاح للمدراء فقط</div></div>
+        <button class="btn danger sm" onclick="logout()" data-i18n="logout">🚪 تسجيل الخروج</button>
       </div>
       <p class="mini" id="aboutMeta" style="margin-top:10px"></p>
     </div>
@@ -191,9 +199,10 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<div class="updatebar" id="updateBar" hidden>تحديث جديد للتطبيق متاح <button class="btn sm" onclick="location.reload()">تحديث الآن</button></div>
+<div class="updatebar" id="updateBar" hidden><span data-i18n="updateBar">تحديث جديد للتطبيق متاح</span> <button class="btn sm" onclick="location.reload()" data-i18n="updateNow">تحديث الآن</button></div>
 
-<script src="config.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="config.js?v=2"></script>
+<script src="i18n.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

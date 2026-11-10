@@ -21,7 +21,7 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px calc(90px + var(--safe-b))
 .card.login{max-width:440px;margin:18px auto 12px;text-align:center}
 .card.login .hero{width:84px;height:84px;border-radius:22px;box-shadow:0 8px 24px rgba(31,56,100,.25);margin-bottom:6px}
 .card.login h2{margin:4px 0 2px;font-size:20px;color:var(--navy)}
-.card.login label.f{text-align:right}
+.card.login label.f{text-align:start}
 .h{margin:4px 0;font-size:18px}
 .meta{color:var(--muted);font-size:13px}
 .mini{font-size:12px;color:var(--muted)}
@@ -30,7 +30,7 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px calc(90px + var(--safe-b))
 .grow{flex:1 1 180px}
 label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
 input[type=text],input[type=search],input[type=date],input[type=email],input[type=tel],input[type=url],input[type=number],input[type=password],select,textarea{width:100%;border:1px solid #cfd6e0;border-radius:10px;padding:10px 11px;font:inherit;background:#fff;color:var(--ink);min-height:42px}
-input[type=password]{letter-spacing:.35em;text-align:center;font-size:20px;direction:ltr}
+input[type=password]{letter-spacing:.12em;text-align:center;font-size:20px;direction:ltr}
 input:focus,select:focus,textarea:focus{outline:2px solid #b7d4ff;border-color:var(--run)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer;background:#e9eef6;color:var(--navy);min-height:40px}
 .btn.p{background:var(--teal);color:#fff}.btn.n{background:var(--navy);color:#fff}.btn.ok{background:var(--ok);color:#fff}.btn.run{background:var(--run);color:#fff}.btn.sm{padding:7px 11px;font-size:13px;min-height:34px}.btn.danger{background:#fde8e8;color:var(--late)}.btn.wide{width:100%}
@@ -92,3 +92,13 @@ details summary{cursor:pointer;font-weight:600;color:var(--navy)}
   .sticky-actions{bottom:0}
 }
 @media (display-mode: standalone){ .pwa-only{display:initial} }
+
+/* v1.2 — roles + language */
+.chip.lang{margin-inline-start:auto;font-size:12px;padding:6px 10px}
+.chip.lang + .chip{margin-inline-start:6px}
+.rolebadge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-inline-start:4px;white-space:nowrap}
+.rolebadge.ex{background:#e0f2f1;color:#0e6b62;border:1px solid #9fd6cf}
+.rolebadge.fo{background:#eef2ff;color:#33408f;border:1px solid #c3cbf5}
+.chips.roles{margin-bottom:4px}
+.chips .rolechip.on{background:#1f3864;color:#fff;border-color:#1f3864}
+html[dir=ltr] body{font-family:"Segoe UI",Roboto,Arial,Tahoma,sans-serif}
