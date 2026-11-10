@@ -91,7 +91,7 @@ async function init() {
   window.addEventListener('online', () => { S.online = true; $('offlineBar').hidden = true; if (S.me) refresh(true); });
   window.addEventListener('offline', () => { S.online = false; $('offlineBar').hidden = false; });
   $('offlineBar').hidden = S.online;
-  S.lang = store.get('tr_lang', '') || ((navigator.language || 'ar').toLowerCase().startsWith('ar') ? 'ar' : 'en'); applyI18n();
+  S.lang = store.get('tr_lang', '') === 'en' ? 'en' : 'ar'; applyI18n();   // Arabic unless the user chose English
   setupInstall();
   S.token = store.get('tr_token', '');
   S.me = store.get('tr_me', null);
