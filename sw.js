@@ -1,7 +1,7 @@
 /* Service worker — caches the app shell so it opens instantly and works offline (read-only).
    API calls (script.google.com) are never cached. Bump CACHE on every release. */
-const CACHE = 'tracker-1448-v4';
-const SHELL = ['./', './index.html', './styles.css?v=2', './app.js?v=2', './i18n.js?v=2', './config.js?v=2', './manifest.webmanifest',
+const CACHE = 'tracker-1448-v5';
+const SHELL = ['./', './index.html', './styles.css?v=2', './app.js?v=2', './i18n.js?v=3', './config.js?v=2', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-192.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/favicon-64.png'];
 
 self.addEventListener('install', e => {
