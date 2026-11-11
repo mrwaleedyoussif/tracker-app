@@ -164,12 +164,16 @@ function myRoleBadge(p) {
   if (!e && !f) return '';
   return `<span class="rolebadge ${e ? 'ex' : 'fo'}">${t(e && f ? 'youBoth' : e ? 'youExec' : 'youFollow')}</span>`;
 }
+/** deep link into المنصة الشاملة (tab gid + row) */
+function hasPlat(p) { return !!(S.boot && S.boot.platformUrl) && p && p.pg !== '' && p.pg !== undefined && p.pg !== null; }
+function platUrl(p, kind) { return hasPlat(p) ? S.boot.platformUrl + '#gid=' + p.pg + ((kind === 'ind' ? p.pi : p.pr) ? '&range=A' + (kind === 'ind' ? p.pi : p.pr) : '') : ''; }
+function plink(p, kind, html) { const u = platUrl(p, kind); return u ? `<a class="plink" href="${esc(u)}" target="_blank" rel="noopener" title="${t(kind === 'ind' ? 'openIndPlat' : 'openProgPlat')}">${html}<span class="ext" aria-hidden="true">↗</span></a>` : html; }
 function card(p) {
   const pct = p.status === 'مكتمل' ? 100 : p.pct, ed = canEdit(p);
   return `<div class="card ${ed ? '' : 'ro'}" id="c-${esc(p.id)}">
     <div class="row between" style="align-items:flex-start">
-      <div class="grow"><h3>${esc(p.program)}</h3>
-        <div class="meta">${esc(tStage(p.stage))} · <span class="tag">${esc(p.icode)}</span> ${esc(tInd(p.icode, p.ind))}</div>
+      <div class="grow"><h3>${plink(p, 'prog', esc(p.program))}</h3>
+        <div class="meta">${esc(tStage(p.stage))} · ${plink(p, 'ind', `<span class="tag">${esc(p.icode)}</span> ${esc(tInd(p.icode, p.ind))}`)}</div>
         <div class="meta">🛠 ${t('executor')}: <b>${esc(p.presp || p.iresp || '—')}</b></div>
         <div class="meta">👁 ${t('follower')}: <b>${esc(p.iresp || '—')}</b> ${myRoleBadge(p)}</div></div>
       <span class="status s-${esc(p.status).replace(/ /g, '-')}">${esc(tStatus(p.status))}</span>
@@ -274,8 +278,9 @@ function renderQuick() {
   const st = $('qStage').value, code = $('qInd').value; S.dirty = {};
   const list = quickPool().filter(p => p.stage === st && p.icode === code);
   $('quickActions').hidden = !list.length;
+  const il = $('qIndLink'), ip = list.find(hasPlat); if (il) { il.hidden = !ip; if (ip) { il.href = platUrl(ip, 'ind'); il.textContent = t('openIndPlat') + ' ↗'; } }
   $('quickList').innerHTML = list.length ? list.map(p => `<div class="qrow">
-      <div class="pn"><b>${esc(p.program)}</b><div class="mini">${esc(p.id)} · ${esc(p.presp || p.iresp || '')} · <span class="alert ${alertClass(p.alert)}">${esc(tAlert(p.alert))}</span></div></div>
+      <div class="pn"><b>${plink(p, 'prog', esc(p.program))}</b><div class="mini">${esc(p.id)} · ${esc(p.presp || p.iresp || '')} · <span class="alert ${alertClass(p.alert)}">${esc(tAlert(p.alert))}</span></div></div>
       <div><label class="f">${t('start')}</label><input type="date" value="${p.start}" onchange="mark('${esc(p.id)}','start',this.value)"></div>
       <div><label class="f">${t('end')}</label><input type="date" value="${p.end}" onchange="mark('${esc(p.id)}','end',this.value)"></div>
       <div><label class="f">${t('status')}</label><select onchange="mark('${esc(p.id)}','status',this.value)">${S.boot.statuses.map(s => `<option value="${esc(s)}" ${s === p.status ? 'selected' : ''}>${esc(tStatus(s))}</option>`).join('')}</select></div>
@@ -310,7 +315,7 @@ function renderDash() {
   const d = S.dash; const k = d.kpis;
   $('kpis').innerHTML = [[t('kTotal'), k.total, ''], [t('kDone'), k.done, 'ok'], [t('kRun'), k.running, 'run'], [t('kNot'), k.notStarted, ''], [t('kLate'), k.late, 'late'], [t('kNoDate'), k.noDates, ''], [t('kWeek'), k.startWeek, ''], [t('kAvg'), k.avg + '%', '']].map(x => `<div class="kpi ${x[2]}"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
   $('stageBars').innerHTML = d.stages.map(s => `<div style="margin:8px 0"><div class="row between"><b>${esc(tStage(s.name))}</b><span class="mini">${t('stageLine', { d: s.done, t: s.total, r: s.running, l: s.late })}</span></div><div class="bar" style="height:10px"><i style="width:${s.total ? Math.round(100 * s.done / s.total) : 0}%;background:var(--ok)"></i></div></div>`).join('');
-  const item = e => `<div class="card" style="padding:10px 12px;margin:0"><b>${esc(e.program)}</b> <span class="tag">${esc(e.icode)}</span><div class="mini">${esc(tStage(e.stage))} · ${esc(e.resp)} · ${esc(tWhen(e.when))}</div></div>`;
+  const item = e => { const p = S.programs.find(x => x.id === e.id) || {}; return `<div class="card" style="padding:10px 12px;margin:0"><b>${plink(p, 'prog', esc(e.program))}</b> ${plink(p, 'ind', `<span class="tag">${esc(e.icode)}</span>`)}<div class="mini">${esc(tStage(e.stage))} · ${esc(e.resp)} · ${esc(tWhen(e.when))}</div></div>`; };
   $('todayList').innerHTML = d.today.length ? d.today.map(item).join('') : `<div class="empty">${t('noToday')}</div>`;
   $('lateList').innerHTML = d.late.length ? d.late.map(item).join('') : `<div class="empty">${t('noLate')}</div>`;
   $('weekList').innerHTML = d.week.length ? d.week.map(item).join('') : `<div class="empty">${t('noWeek')}</div>`;

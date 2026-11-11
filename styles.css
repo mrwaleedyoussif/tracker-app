@@ -122,3 +122,8 @@ html[dir=ltr] body{font-family:"Segoe UI",Roboto,Arial,Tahoma,sans-serif}
 .prow select.acc{font-size:12px;padding:4px 6px;min-width:0}
 .seg button.on{background:#1f3864}
 @media (max-width:380px){header .school img{height:20px}header h1{font-size:14px}}
+.plink{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(42,120,214,.55)}
+.plink:hover,.plink:focus{color:var(--run);border-bottom-style:solid}
+.plink .ext{font-size:.75em;color:var(--run);margin-inline-start:3px;vertical-align:super}
+#qIndLink{display:inline-block;margin-top:6px;border-bottom:0;color:var(--run);font-weight:600}
+#qIndLink[hidden]{display:none}
