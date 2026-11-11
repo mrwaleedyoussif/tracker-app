@@ -4,8 +4,10 @@
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic","Noto Naskh Arabic",Arial,sans-serif;font-size:15px;line-height:1.55;overscroll-behavior-y:contain}
 body{min-height:100vh;min-height:100dvh}
 header{position:sticky;top:0;z-index:6;background:var(--navy);color:#fff;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;display:flex;align-items:center;gap:10px}
-header .logo{width:30px;height:30px;border-radius:8px}
-header h1{font-size:16px;margin:0;flex:1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .school{flex:none;display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 7px}
+header .school img{display:block;height:24px;width:auto}
+header h1{font-size:16px;margin:0;flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header h1 .t-short{display:none}
 .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;color:#fff;cursor:pointer;max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .offline{background:#7a2e0e;color:#fff;font-size:13px;padding:6px 12px;text-align:center}
 nav{position:sticky;top:46px;z-index:5;background:#fff;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;gap:2px;padding:0 6px;scrollbar-width:none}
@@ -19,7 +21,7 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px calc(90px + var(--safe-b))
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
 .card h3{margin:0 0 4px;font-size:16px}
 .card.login{max-width:440px;margin:18px auto 12px;text-align:center}
-.card.login .hero{width:84px;height:84px;border-radius:22px;box-shadow:0 8px 24px rgba(31,56,100,.25);margin-bottom:6px}
+.card.login .school-hero{display:block;width:240px;max-width:72%;height:auto;margin:4px auto 10px}
 .card.login h2{margin:4px 0 2px;font-size:20px;color:var(--navy)}
 .card.login label.f{text-align:start}
 .h{margin:4px 0;font-size:18px}
@@ -83,6 +85,10 @@ details summary{cursor:pointer;font-weight:600;color:var(--navy)}
   nav button .ic{font-size:20px;line-height:1}
   nav button.on{background:#eef3f8}
   header h1{font-size:15px}
+  header{gap:8px;padding-left:10px;padding-right:10px}
+  .chip.lang{padding:5px 9px}.chip.lang .lt{display:none}
+  #userChip{max-width:36vw}
+  header h1 .t-full{display:none}header h1 .t-short{display:inline}
   .kpi b{font-size:22px}
 }
 @media (min-width:701px){
@@ -115,3 +121,4 @@ html[dir=ltr] body{font-family:"Segoe UI",Roboto,Arial,Tahoma,sans-serif}
 .sendsum{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef8f6;border:1px solid #bfe3dc;font-size:14px;font-weight:600}
 .prow select.acc{font-size:12px;padding:4px 6px;min-width:0}
 .seg button.on{background:#1f3864}
+@media (max-width:380px){header .school img{height:20px}header h1{font-size:14px}}

@@ -22,7 +22,7 @@ function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll('[data-i18n-role]').forEach(el => { el.textContent = tRole(el.value); });
-  const lb = $('langBtn'); if (lb) lb.textContent = '🌐 ' + t('langBtn');
+  const lb = $('langBtn'); if (lb) { lb.innerHTML = '🌐<span class="lt"> ' + t('langBtn') + '</span>'; lb.title = t('langBtn'); lb.setAttribute('aria-label', t('langBtn')); }
   const ls = $('langSel'); if (ls) ls.value = S.lang;
 }
 function setLang(l) {

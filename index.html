@@ -15,13 +15,13 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <div id="offlineBar" class="offline" data-i18n="offline" hidden>📴 غير متصل بالإنترنت — تُعرض آخر بيانات محفوظة، ولن يُحفظ أي تعديل حتى يعود الاتصال.</div>
 <header>
-  <img src="icons/icon-192.png" alt="" class="logo">
-  <h1 data-i18n="appTitle">متتبع برامج المؤشرات ١٤٤٨</h1>
+  <span class="school"><img src="icons/school-logo.png" alt="مدارس الأندلس العالمية — Andalus International Schools" width="64" height="24"></span>
+  <h1><span class="t-full" data-i18n="appTitle">متتبع برامج المؤشرات ١٤٤٨</span><span class="t-short" data-i18n="appShort">المتتبع</span></h1>
   <button class="chip lang" id="langBtn" onclick="setLang(S.lang==='en'?'ar':'en')">🌐 English</button>
   <button class="chip" id="userChip" onclick="go('me')">👤 تسجيل الدخول</button>
 </header>
@@ -44,7 +44,7 @@
   <!-- LOGIN -->
   <section class="view" id="v-login">
     <div class="card login">
-      <img src="icons/icon-192.png" alt="" class="hero">
+      <img src="icons/school-logo.png" alt="مدارس الأندلس العالمية — Andalus International Schools" class="school-hero" width="240" height="90">
       <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
       <p class="meta" data-i18n="loginIntro">اختر اسمك ثم أدخل كلمة المرور التي استلمتها من إدارة المدرسة.</p>
       <label class="f" for="loginName" data-i18n="name">الاسم</label>
@@ -237,8 +237,8 @@
 <div class="toast" id="toast"></div>
 <div class="updatebar" id="updateBar" hidden><span data-i18n="updateBar">تحديث جديد للتطبيق متاح</span> <button class="btn sm" onclick="location.reload()" data-i18n="updateNow">تحديث الآن</button></div>
 
-<script src="config.js?v=3"></script>
-<script src="i18n.js?v=5"></script>
-<script src="app.js?v=4"></script>
+<script src="config.js?v=4"></script>
+<script src="i18n.js?v=6"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

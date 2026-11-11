@@ -3,7 +3,7 @@
 'use strict';
 const I18N = {
   ar: {
-    appTitle: 'متتبع برامج المؤشرات ١٤٤٨', signIn: '👤 تسجيل الدخول', adminTag: 'مدير', langBtn: 'English',
+    appTitle: 'متتبع برامج المؤشرات ١٤٤٨', appShort: 'المتتبع', signIn: '👤 تسجيل الدخول', adminTag: 'مدير', langBtn: 'English',
     offline: '📴 غير متصل بالإنترنت — تُعرض آخر بيانات محفوظة، ولن يُحفظ أي تعديل حتى يعود الاتصال.',
     navMine: 'برامجي', navQuick: 'إدخال سريع', navAll: 'كل البرامج', navDash: 'المتابعة', navPeople: 'جهات الاتصال',
     loading: 'جارٍ التحميل…',
@@ -64,7 +64,7 @@ const I18N = {
       SUSPENDED: 'هذا الحساب موقوف — راجع مالك التطبيق', TOO_MANY: 'عدد المستلمين كبير — قسّم الإرسال على دفعات', BAD_REQUEST: 'الطلب ناقص', AUTH: 'انتهت الجلسة — سجّل الدخول مجدداً', AUTH_EXPIRED: 'انتهت صلاحية الجلسة — سجّل الدخول مجدداً', ONLY_IN_SHEET: 'هذا الإجراء يُنفَّذ من داخل ملف Google Sheets (قائمة «متتبع البرامج»)' }
   },
   en: {
-    appTitle: 'Indicator Programs Tracker 1448', signIn: '👤 Sign in', adminTag: 'Admin', langBtn: 'العربية',
+    appTitle: 'Indicator Programs Tracker 1448', appShort: 'Tracker', signIn: '👤 Sign in', adminTag: 'Admin', langBtn: 'العربية',
     offline: '📴 You are offline — showing the last saved data. Changes cannot be saved until the connection returns.',
     navMine: 'My programs', navQuick: 'Quick entry', navAll: 'All programs', navDash: 'Dashboard', navPeople: 'Contacts',
     loading: 'Loading…',
